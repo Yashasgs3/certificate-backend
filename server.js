@@ -66,7 +66,7 @@ app.post("/generate-certificate", async (req, res) => {
       issueDate: issueDate.trim(),
       verificationUrl:
         verificationUrl ||
-        `https://www.broadbeachonline.com/verify?cert=${certificateNumber}`,
+        `${BASE_URL}/verify?cert=${certificateNumber}`,
       instructorName,
       courseSubtitle,
     };
@@ -74,6 +74,25 @@ app.post("/generate-certificate", async (req, res) => {
     console.log("Generating certificate with data:", certData);
 
     const pdfBuffer = await generateCertificate(certData);
+
+    // SAVE certificate to MongoDB (VERY IMPORTANT)
+    try {
+      await Certificate.create({
+        fullName: certData.fullName,
+        email: req.body.email || "no-email@example.com",
+        courseName: certData.courseName,
+        courseSubtitle: certData.courseSubtitle || "",
+        certificateNumber: certData.certificateNumber,
+        issueDate: certData.issueDate,
+        instructorName: certData.instructorName || "",
+        verificationUrl: certData.verificationUrl,
+        status: "active",
+      });
+      console.log(`✅ Certificate saved to database: ${certificateNumber}`);
+    } catch (dbError) {
+      console.warn(`⚠️ Warning: Certificate generated but not saved to DB: ${dbError.message}`);
+      // Continue anyway - PDF still generated successfully
+    }
 
     res.set({
       "Content-Type": "application/pdf",
@@ -129,6 +148,25 @@ app.post("/send-certificate", async (req, res) => {
     console.log("Generating certificate for email with data:", certData);
 
     const pdfBuffer = await generateCertificate(certData);
+
+    // SAVE certificate to MongoDB
+    try {
+      await Certificate.create({
+        fullName: certData.fullName,
+        email: email,
+        courseName: certData.courseName,
+        courseSubtitle: certData.courseSubtitle || "",
+        certificateNumber: certData.certificateNumber,
+        issueDate: certData.issueDate,
+        instructorName: certData.instructorName || "",
+        verificationUrl: certData.verificationUrl,
+        status: "active",
+      });
+      console.log(`✅ Certificate saved to database: ${certificateNumber}`);
+    } catch (dbError) {
+      console.warn(`⚠️ Warning: Certificate generated but not saved to DB: ${dbError.message}`);
+      // Continue anyway - email still sends successfully
+    }
 
     const mailOptions = {
       from: '"LMS Platform" <no-reply@lms.com>',
