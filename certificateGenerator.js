@@ -1,5 +1,6 @@
-const puppeteer = require('puppeteer-core');
 const chromium = require("@sparticuz/chromium");
+const puppeteerCore = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 const QRCode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
@@ -92,14 +93,26 @@ async function generateCertificate(data) {
       .replace('{{accreditation4}}', accreditation4)
       .replace('{{broadbeachLogo}}', broadbeachLogo);
 
-    // Launch browser with Render-compatible Chromium
-    const browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-      timeout: 60000
-    });
+    // Launch browser - works on Render and locally
+    let browser;
+    
+    if (process.env.RENDER === 'true') {
+      // Render server - use Sparticuz chromium
+      console.log('🌍 Launching Puppeteer on Render');
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        executablePath: await chromium.executablePath(),
+        headless: true,
+        timeout: 60000
+      });
+    } else {
+      // Local development - use regular puppeteer with system Chrome
+      console.log('💻 Launching Puppeteer locally');
+      browser = await puppeteer.launch({
+        headless: true,
+        timeout: 60000
+      });
+    }
 
     const page = await browser.newPage();
 
