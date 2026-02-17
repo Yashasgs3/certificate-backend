@@ -98,6 +98,7 @@ async function generateCertificate(data) {
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath(),
       headless: chromium.headless,
+      timeout: 60000
     });
 
     const page = await browser.newPage();
@@ -111,8 +112,8 @@ async function generateCertificate(data) {
 
     // Load HTML content
     await page.setContent(html, {
-      waitUntil: 'networkidle0',
-      timeout: 30000
+      waitUntil: 'domcontentloaded',
+      timeout: 60000
     });
 
     console.log('Certificate rendered successfully');
