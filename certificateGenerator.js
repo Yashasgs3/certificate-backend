@@ -12,7 +12,7 @@ const path = require('path');
  */
 async function generateCertificate(data) {
   // Get base URL from environment or use production default
-  const BASE_URL = process.env.VERIFICATION_BASE_URL || `${BASE_URL}/verify?cert=${certificateNumber}`;
+  const BASE_URL = process.env.VERIFICATION_BASE_URL || 'https://www.broadbeachonline.com';
 
   const {
     fullName,
