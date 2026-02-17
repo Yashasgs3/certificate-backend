@@ -10,7 +10,7 @@ const fs = require("fs");
 const path = require("path");
 
 // Get base URL from environment or use production default
-const BASE_URL = process.env.VERIFICATION_BASE_URL || 'https://www.broadbeachonline.com';
+const BASE_URL = process.env.VERIFICATION_BASE_URL || `${BASE_URL}/verify?cert=${certificateNumber}`;
 
 const app = express();
 
