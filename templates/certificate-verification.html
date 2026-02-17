@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate Verification</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --navy: #0b3d91;
+      --yellow: #ffd100;
+      --dark: #0b2140;
+      --light-bg: #f5f7fa;
+      --success: #28a745;
+      --border-color: #e0e0e0;
+    }
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--navy) 0%, #1a5a9e 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .verification-header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+      padding: 20px 0;
+    }
+
+    .verification-header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .verification-header p {
+      font-size: 1.1em;
+      opacity: 0.9;
+    }
+
+    .certificate-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--dark) 100%);
+      color: var(--yellow);
+      padding: 30px;
+      text-align: center;
+    }
+
+    .card-header h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.8em;
+      margin-bottom: 10px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      background: var(--success);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.9em;
+      text-transform: uppercase;
+      margin-top: 10px;
+    }
+
+    .status-badge.expired {
+      background: #dc3545;
+    }
+
+    .status-badge.revoked {
+      background: #999;
+    }
+
+    .card-body {
+      padding: 40px;
+    }
+
+    .detail-section {
+      margin-bottom: 30px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .detail-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      padding: 15px;
+      background: var(--light-bg);
+      border-radius: 8px;
+    }
+
+    .detail-label {
+      font-weight: 700;
+      color: var(--navy);
+      width: 40%;
+    }
+
+    .detail-value {
+      color: #333;
+      width: 55%;
+      word-break: break-word;
+      text-align: right;
+    }
+
+    .recipient-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2em;
+      font-weight: 800;
+      color: var(--dark);
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(to bottom, var(--yellow), rgba(255, 209, 0, 0.1));
+      border-radius: 8px;
+    }
+
+    .course-info {
+      background: linear-gradient(135deg, rgba(11, 61, 145, 0.05) 0%, rgba(255, 209, 0, 0.05) 100%);
+      padding: 20px;
+      border-left: 4px solid var(--yellow);
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .course-info h3 {
+      color: var(--navy);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.3em;
+      margin-bottom: 10px;
+    }
+
+    .course-info p {
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .verification-checkmark {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .checkmark {
+      font-size: 3em;
+      color: var(--success);;
+      animation: checkPopIn 0.6s ease-out;
+    }
+
+    @keyframes checkPopIn {
+      0% {
+        transform: scale(0);
+      }
+      50% {
+        transform: scale(1.2);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 30px;
+      background: var(--light-bg);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .footer p {
+      color: #666;
+      font-size: 0.95em;
+      line-height: 1.6;
+    }
+
+    .footer-link {
+      color: var(--navy);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #f5c6cb;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: white;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .card-header h2 {
+        font-size: 1.3em;
+      }
+
+      .recipient-name {
+        font-size: 1.5em;
+      }
+
+      .detail-row {
+        flex-direction: column;
+      }
+
+      .detail-label,
+      .detail-value {
+        width: 100%;
+        text-align: left;
+      }
+
+      .verification-header h1 {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="verification-header">
+      <h1>🎓 Certificate Verification</h1>
+      <p>Scan this QR code to verify certificate authenticity</p>
+    </div>
+
+    <div class="certificate-card" id="certificateCard">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading certificate details...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get certificate number from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const certNumber = urlParams.get('cert');
+
+    if (!certNumber) {
+      document.getElementById('certificateCard').innerHTML = `
+        <div class="error-message">
+          ❌ No certificate number provided. Please scan the certificate QR code or provide a valid certificate number.
+        </div>
+      `;
+    } else {
+      // Fetch certificate details from API
+      fetch(`/api/verify-certificate/${certNumber}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Certificate not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          displayCertificate(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('certificateCard').innerHTML = `
+            <div class="error-message">
+              ❌ Certificate not found or invalid. Please check the certificate number and try again.
+            </div>
+          `;
+        });
+    }
+
+    function displayCertificate(cert) {
+      const statusClass = cert.status === 'active' ? '' : cert.status;
+      const statusText = cert.status.toUpperCase();
+
+      const html = `
+        <div class="card-header">
+          <h2>Certificate Verified ✓</h2>
+          <div class="status-badge ${statusClass}">${statusText}</div>
+        </div>
+
+        <div class="card-body">
+          <div class="verification-checkmark">
+            <div class="checkmark">✓</div>
+            <p style="color: var(--success); font-weight: 700;">This certificate is authentic and verified</p>
+          </div>
+
+          <div class="recipient-name">${cert.fullName}</div>
+
+          <div class="detail-section">
+            <div class="course-info">
+              <h3>${cert.courseName}</h3>
+              <p>${cert.courseSubtitle}</p>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3 style="color: var(--navy); margin-bottom: 15px;">Certificate Details</h3>
+            
+            <div class="detail-row">
+              <div class="detail-label">Certificate Number:</div>
+              <div class="detail-value"><strong>${cert.certificateNumber}</strong></div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-label">Issue Date:</div>
+              <div class="detail-value">${cert.issueDate}</div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-label">Email:</div>
+              <div class="detail-value">${cert.email}</div>
+            </div>
+
+            ${cert.score ? `
+              <div class="detail-row">
+                <div class="detail-label">Score:</div>
+                <div class="detail-value"><strong>${cert.score}%</strong></div>
+              </div>
+            ` : ''}
+
+            ${cert.expiryDate ? `
+              <div class="detail-row">
+                <div class="detail-label">Expiry Date:</div>
+                <div class="detail-value">${new Date(cert.expiryDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-row">
+              <div class="detail-label">Instructor:</div>
+              <div class="detail-value">${cert.instructorName}</div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-label">Conducted By:</div>
+              <div class="detail-value"><strong>Broadbeach</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer">
+          <p>This certificate is issued by <strong>Broadbeach</strong> and is authentic.</p>
+          <p>For inquiries, contact: <a href="mailto:verify@broadbeachonline.com" class="footer-link">verify@broadbeachonline.com</a></p>
+          <p style="margin-top: 15px; font-size: 0.85em; color: #999;">
+            Verification Date: ${new Date().toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+          </p>
+        </div>
+      `;
+
+      document.getElementById('certificateCard').innerHTML = html;
+    }
+  </script>
+</body>
+</html>

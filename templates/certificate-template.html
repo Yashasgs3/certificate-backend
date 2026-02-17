@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Certificate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#0b3d91;--yellow:#ffd100;--dark:#0b2140}
+    html,body{height:100%;margin:0;background:#f2f4f8}
+    body{font-family: 'Roboto', Arial, sans-serif;color:#07223f}
+    .certificate-wrapper{max-width:820px;margin:18px auto;padding:0}
+    .certificate-container{background:#fff;overflow:hidden;border:1px solid #e7ecf6}
+
+    /* Hero banner */
+    .cert-hero{background: url('{{backgroundImage}}') center/cover no-repeat;color:var(--yellow);padding:62px 36px 28px;position:relative}
+    .cert-hero .brand-left{position:absolute;left:10px;top:10px}
+    .cert-hero .brand-right{position:absolute;right:20px;top:18px}
+    .certificate-title{font-family: 'Montserrat', sans-serif;font-size:64px;font-weight:800;letter-spacing:1px;margin:40px 0;text-align:left;color:var(--yellow)}
+    .hero-divider{height:8px;background:var(--yellow);width:100%}
+
+    /* Main body */
+    .cert-body{display:flex;padding:28px 36px 18px;gap:20px;background:#fff}
+    .cert-left{flex:2;padding-right:14px}
+    .cert-right{flex:1;max-width:260px}
+
+    .cert-subtle{color:#0b3d91;font-size:14px;margin-bottom:8px}
+    .recipient-name{font-family: 'Montserrat', sans-serif;font-size:48px;font-weight:800;color:#04224a;margin:6px 0;text-transform:uppercase}
+    .lead-text{color:#07325a;line-height:1.5;font-size:15px;margin-bottom:12px}
+    .course-title{font-family: 'Montserrat', sans-serif;font-size:46px;color:#04224a;font-weight:800;margin:6px 0}
+    .course-sub{font-size:16px;color:#04315a;font-weight:700;margin-bottom:10px}
+
+    .info-box{background:#fff;border:0;padding:0;margin-bottom:12px}
+    .info-row{font-size:13px;color:#0b3d91;margin-bottom:8px}
+    .info-row strong{display:block;color:#0b3d91}
+
+    .qr-box{width:100%;text-align:center;margin-top:8px}
+    .qr-box img{width:140px;height:140px;border:6px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.12)}
+
+    .verified-badge{position:absolute;right:30px;top:calc(62px + 12px);background:#fff;border-radius:18px;padding:6px 10px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(3,24,60,0.12)}
+    .verified-badge img{height:20px}
+    .verified-badge.inline-badge{position:static;box-shadow:none;background:transparent;padding:0;gap:8px;align-items:center}
+    .verified-badge.inline-badge img{height:120px}
+
+    .signature-row{display:flex;justify-content:space-between;align-items:flex-end;padding:18px 36px 10px;border-top:1px solid #eef2f7}
+    .signature-left{max-width:60%}
+    .signature-line{width:220px;border-top:2px solid #111;margin-bottom:8px}
+    .signature-name{font-weight:800;color:#10253f}
+    .issuer-small{font-size:12px;color:#314d6b;margin-top:6px;line-height:1.25}
+
+    .logos-row{display:flex;justify-content:flex-start;gap:12px;padding:8px 36px}
+    .logos-row img{height:36px}
+
+    .cert-footer{background:var(--yellow);color:var(--navy);text-align:center;padding:10px 12px;font-size:13px;font-weight:700}
+
+    /* Buttons */
+    .certificate-actions{display:flex;justify-content:center;gap:10px;margin:18px 0}
+    .btn{background:#fff;border:1px solid #d0d7e6;padding:10px 14px;border-radius:6px;cursor:pointer;color:#0b2140;font-weight:600}
+    
+    /* Accreditation Section */
+    .accreditation-section{
+      padding: 10px 36px 0;
+      border-top: 1px solid #eef2f7;
+      background:#fff;
+    }
+
+    .accreditation-logos{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:70px;
+      flex-wrap:wrap;
+      margin-bottom:6px;
+    }
+
+    .accreditation-logos img{
+      height:50px;
+      object-fit:contain;
+      filter: grayscale(0%);
+    }
+
+    /* Country list */
+    .country-row{
+      text-align:center;
+      font-size:12px;
+      font-weight:700;
+      color:#fff;
+      background:var(--navy);
+      letter-spacing:0.6px;
+      padding:6px 10px 10px;
+    }
+
+    /* Responsive tweak */
+    @media(max-width:768px){
+      .accreditation-logos img{
+        height:30px;
+      }
+      .country-row{
+        font-size:11px;
+        line-height:1.4;
+      }
+    }
+
+    @media(max-width:920px){.certificate-wrapper{padding:0 12px}.cert-body{flex-direction:column}.cert-right{max-width:none}}
+  </style>
+</head>
+<body>
+    <div class="certificate-wrapper">
+      <div class="certificate-container">
+        <div class="certificate-block">
+        <div class="cert-hero">
+          <div class="brand-left"><img src="{{logoLeftImage}}" alt="logo" style="height:100px; background:transparent; padding:3px"></div>
+          <div class="brand-right"><img src="{{logoRightImage}}" alt="arrow" style="height:64px; background:transparent; padding:6px"></div>
+          <div class="certificate-title">CERTIFICATE OF ACHIEVEMENT</div>
+        </div>
+        <div class="hero-divider"></div>
+
+        <div class="cert-body">
+          <div class="cert-left">
+            <div style="color:#0b3d91;font-size:14px;margin-bottom:8px">This is to certify that</div>
+            <div class="recipient-name">{{fullName}}</div>
+
+            <div class="lead-text">
+              has successfully completed the certification requirements and assessments prescribed by our organization in accordance with the ISO 9001, ISO 19011 Standards &amp; has achieved proficiency and is certified as:
+            </div>
+
+            <div class="course-title">{{courseName}}</div>
+            <div class="lead-text" style="font-weight:700; font-size:16px; margin-top:6px">{{courseSubtitle}}</div>
+
+            <div class="issuer-small" style="margin-top:12px">{{instructorName}}</div>
+          </div>
+
+          <div class="cert-right">
+            <div class="verified-badge inline-badge"><img src="{{verifiedImage}}" alt="verified"> <span style="color:#0b3d91;font-weight:700"></span></div>
+            <div class="info-box">
+              <div class="info-row"><strong>Certificate Number</strong><span>{{certificateNumber}}</span></div>
+              <div class="info-row"><strong>Certificate Issue</strong><span>{{issueDate}}</span></div>
+            </div>
+
+            <div class="qr-box">
+              <img id="qrImg" src="{{qrCode}}" alt="QR Code" />
+            </div>
+          </div>
+        </div>
+
+        <div class="signature-row">
+          <div class="signature-left">
+            <div class="signature-line"></div>
+            <div class="signature-name">Authorized Signatory</div>
+            <div class="issuer-small" style="margin-top:8px">This certificate verifies that the recipient has met all certification criteria. Verification available at <strong>www.broadbeachonline.com</strong></div>
+          </div>
+
+          <div style="text-align:right; display:flex; align-items:center; justify-content:flex-end; gap:12px;">
+            <img src="{{broadbeachLogo}}" alt="broadbeach" style="height:30px">
+            <span style="font-family: 'Montserrat', sans-serif; font-size:30px; line-height:1; font-weight:800; color:#04224a; letter-spacing:2px;">BROADBEACH</span>
+          </div>
+        </div>
+
+        <!-- Accreditation Logos -->
+        <div class="accreditation-section">
+          <div class="accreditation-logos">
+            <img src="{{accreditation1}}" alt="DAAS">
+            <img src="{{accreditation2}}" alt="UK Accrediting Certification Limited">
+            <img src="{{accreditation3}}" alt="EGAC">
+            <img src="{{accreditation4}}" alt="LSF Youth Environmental Council">
+          </div>
+
+          <div class="country-row">
+            UNITED KINGDOM | INDIA | SAUDI ARABIA | CANADA | USA | NIGERIA | PHILIPPINES | BANGLADESH | QATAR | UAE
+          </div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+
+</body>
+</html>
