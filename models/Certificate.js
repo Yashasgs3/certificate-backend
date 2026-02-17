@@ -55,6 +55,17 @@ const CertificateSchema = new mongoose.Schema({
     enum: ['active', 'expired', 'revoked'],
     default: 'active'
   },
+  verificationCount: {
+    type: Number,
+    default: 0
+  },
+  lastVerifiedAt: {
+    type: Date
+  },
+  verificationIPs: {
+    type: [String],
+    default: []
+  },
   createdAt: {
     type: Date,
     default: Date.now

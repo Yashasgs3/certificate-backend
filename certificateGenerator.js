@@ -1,5 +1,3 @@
-const chromium = require("@sparticuz/chromium");
-const puppeteerCore = require("puppeteer-core");
 const puppeteer = require("puppeteer");
 const QRCode = require('qrcode');
 const fs = require('fs');
@@ -11,8 +9,8 @@ const path = require('path');
  * @returns {Promise<Buffer>} PDF buffer
  */
 async function generateCertificate(data) {
-  // Get base URL from environment or use production default
-  const BASE_URL = process.env.VERIFICATION_BASE_URL || 'https://www.broadbeachonline.com';
+  // Base URL for QR code verification
+  const BASE_URL = 'http://localhost:5000';
 
   const {
     fullName,
@@ -59,7 +57,8 @@ async function generateCertificate(data) {
     };
 
     // Generate QR code as data URL
-    const qrUrl = verificationUrl || `${BASE_URL}/verify?cert=${certificateNumber}`;
+    // QR points to broadbeachonline.com PHP page for certificate verification
+    const qrUrl = `https://www.broadbeachonline.com/admin/pages/admincontactus.php?cert=${certificateNumber}`;
     console.log(`QR Code URL: ${qrUrl}`);
     const qrDataURL = await QRCode.toDataURL(qrUrl);
 
@@ -93,50 +92,36 @@ async function generateCertificate(data) {
       .replace('{{accreditation4}}', accreditation4)
       .replace('{{broadbeachLogo}}', broadbeachLogo);
 
-    // Launch browser - works on Render and locally
+    // Launch browser
     let browser;
-    
-    if (process.env.RENDER === 'true') {
-      // Render server - use Sparticuz chromium
-      console.log('🌍 Launching Puppeteer on Render');
-      browser = await puppeteerCore.launch({
-        args: chromium.args,
-        executablePath: await chromium.executablePath(),
-        headless: true,
-        timeout: 60000
-      });
-    } else {
-      // Local development - use regular puppeteer with system Chrome
-      console.log('💻 Launching Puppeteer locally');
-      browser = await puppeteer.launch({
-        headless: true,
-        timeout: 60000
-      });
-    }
+    console.log('Launching Puppeteer');
+    browser = await puppeteer.launch({
+      headless: true
+    });
 
     const page = await browser.newPage();
 
-    // Set viewport for A4 landscape
+    // Set viewport for A3 landscape
     await page.setViewport({
-      width: 1280,
-      height: 720,
-      deviceScaleFactor: 2
+      width: 1920,
+      height: 1280,
+      deviceScaleFactor: 1
     });
 
     // Load HTML content
     await page.setContent(html, {
-      waitUntil: 'domcontentloaded',
-      timeout: 60000
+      waitUntil: 'domcontentloaded'
     });
 
     console.log('Certificate rendered successfully');
     console.log(`Images loaded: ${[backgroundImage, logoLeftImage, logoRightImage, verifiedImage, accreditation1, accreditation2, accreditation3, accreditation4].filter(img => img).length}/8`);
 
-    // Generate PDF
+    // Generate PDF - A2 landscape with proper scaling
     const pdfBuffer = await page.pdf({
-      format: 'A4',
+      format: 'A2',
       landscape: true,
       printBackground: true,
+      preferCSSPageSize: true,
       margin: {
         top: 0,
         bottom: 0,

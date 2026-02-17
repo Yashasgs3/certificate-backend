@@ -5,12 +5,15 @@ const nodemailer = require("nodemailer");
 const generateCertificate = require("./certificateGenerator");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/authRoutes");
+const certificateRoutes = require("./routes/certificateRoutes");
 const Certificate = require("./models/Certificate");
+const User = require("./models/user");
 const fs = require("fs");
 const path = require("path");
 
-// Get base URL from environment or use production default
-const BASE_URL = process.env.VERIFICATION_BASE_URL || `${BASE_URL}/verify?cert=${certificateNumber}`;
+// Get base URL from environment
+const BASE_URL = process.env.VERIFICATION_BASE_URL || 'http://localhost:5000';
 
 const app = express();
 
@@ -33,8 +36,40 @@ app.get("/", (req, res) => {
   res.send("Backend is running 🚀");
 });
 
+// Export certificates as JSON
+app.get("/api/export-certificates", async (req, res) => {
+  try {
+    const certificates = await Certificate.find();
+    res.json({
+      totalCertificates: certificates.length,
+      exportDate: new Date().toISOString(),
+      data: certificates
+    });
+  } catch (error) {
+    console.error('Export error:', error);
+    res.status(500).json({ error: "Failed to export data" });
+  }
+});
+
+// Export users as JSON
+app.get("/api/export-users", async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json({
+      totalUsers: users.length,
+      exportDate: new Date().toISOString(),
+      data: users
+    });
+  } catch (error) {
+    console.error('Export error:', error);
+    res.status(500).json({ error: "Failed to export data" });
+  }
+});
+
 // Define Routes
 app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/certificates", certificateRoutes);
 app.use("/api/admin", require("./routes/adminRoutes"));
 
 app.post("/generate-certificate", async (req, res) => {

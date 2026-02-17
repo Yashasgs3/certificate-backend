@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const Admin = require('../Admin');
+const Admin = require('../models/admin');
 const auth = require('../middleware/auth');
 
 // Validation helper functions
