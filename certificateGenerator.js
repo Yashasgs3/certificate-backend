@@ -1,4 +1,5 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
+const chromium = require("@sparticuz/chromium");
 const QRCode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
@@ -91,36 +92,13 @@ async function generateCertificate(data) {
       .replace('{{accreditation4}}', accreditation4)
       .replace('{{broadbeachLogo}}', broadbeachLogo);
 
-    // Launch browser - configure for Render
-    let launchConfig = {
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-gpu',
-        '--single-process'
-      ]
-    };
-
-    // For production on Render, try to find Chrome
-    if (process.env.NODE_ENV === 'production') {
-      const chromePaths = [
-        '/usr/bin/chromium-browser',
-        '/usr/bin/chromium',
-        '/snap/bin/chromium',
-        process.env.CHROME_BIN // Set by Render if Chrome is installed
-      ];
-      
-      for (const chromePath of chromePaths) {
-        if (chromePath && fs.existsSync(chromePath)) {
-          launchConfig.executablePath = chromePath;
-          console.log(`✅ Found Chrome at: ${chromePath}`);
-          break;
-        }
-      }
-    }
-
-    const browser = await puppeteer.launch(launchConfig);
+    // Launch browser with Render-compatible Chromium
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
 
     const page = await browser.newPage();
 
